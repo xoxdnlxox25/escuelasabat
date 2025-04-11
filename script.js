@@ -1,4 +1,4 @@
-const API_BASE = "https://script.google.com/macros/s/AKfycbXXXXXXXXXXXXXX/exec"; // <-- Cambia esto por tu URL real
+const API_BASE = "https://script.google.com/macros/s/AKfycbw79TRHoNmZzHJ06V3H9_3us97wjMg447QDK0wJ-asgXkoDFGJnHadBbAmqDdet27uMRw/exec"; // Reemplaza con tu URL real
 
 function cargarHermanos(grupo) {
   fetch(`${API_BASE}?grupo=${encodeURIComponent(grupo)}`)
@@ -56,4 +56,3 @@ document.getElementById("registro-form").addEventListener("submit", function (e)
   this.reset();
   document.getElementById("lista-hermanos").innerHTML = "";
 });
-
