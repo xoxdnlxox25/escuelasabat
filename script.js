@@ -1,5 +1,4 @@
-// ✅ Pega aquí tu URL de Google Apps Script 👇
-const API_BASE = "https://script.google.com/macros/s/AKfycbw79TRHoNmZzHJ06V3H9_3us97wjMg447QDK0wJ-asgXkoDFGJnHadBbAmqDdet27uMRw/exec";
+const API_BASE = "https://script.google.com/macros/s/AKfycbXXXXXXXXXXXXXX/exec"; // <-- Cambia esto por tu URL real
 
 function cargarHermanos(grupo) {
   fetch(`${API_BASE}?grupo=${encodeURIComponent(grupo)}`)
@@ -11,7 +10,7 @@ function cargarHermanos(grupo) {
       data.forEach(nombre => {
         const li = document.createElement("li");
         li.innerHTML = `
-          <label style="display:flex; justify-content:space-between; align-items:center;">
+          <label class="item-check">
             ${nombre}
             <input type="checkbox" value="${nombre}" />
           </label>
@@ -44,7 +43,11 @@ document.getElementById("registro-form").addEventListener("submit", function (e)
     .map(cb => cb.value)
     .join(', ');
 
-  const mensaje = `📋 *Reporte Escuela Sabática - ${grupo}*\n\n➡️ Visitas Misioneras: ${visitas}\n📖 Estudios Bíblicos: ${estudios}\n📚 Literatura Distribuida: ${literatura}\n🫂 Personas Auxiliadas: ${auxilio}\n🏥 Visitas a Enfermos: ${enfermos}\n🏠 Personas a la Iglesia: ${traidas}\n🚫 No asistieron: ${faltantes || 'Ninguno'}`;
+  const hoy = new Date().toLocaleDateString('es-BO', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+  });
+
+  const mensaje = `📋 *Reporte Escuela Sabática - ${grupo}*\n🗓️ Fecha: ${hoy}\n\n➡️ Visitas Misioneras: ${visitas}\n📖 Estudios Bíblicos: ${estudios}\n📚 Literatura Distribuida: ${literatura}\n🫂 Personas Auxiliadas: ${auxilio}\n🏥 Visitas a Enfermos: ${enfermos}\n🏠 Personas a la Iglesia: ${traidas}\n🚫 No asistieron: ${faltantes || 'Ninguno'}`;
 
   const whatsappURL = `https://wa.me/?text=${encodeURIComponent(mensaje)}`;
   window.open(whatsappURL, '_blank');
@@ -53,3 +56,4 @@ document.getElementById("registro-form").addEventListener("submit", function (e)
   this.reset();
   document.getElementById("lista-hermanos").innerHTML = "";
 });
+
