@@ -47,7 +47,7 @@ document.getElementById("registro-form").addEventListener("submit", function (e)
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
   });
 
-  const mensaje = `📋 *Reporte Escuela Sabática - ${grupo}*\n🗓️ Fecha: ${hoy}\n\n➡️ Visitas Misioneras: ${visitas}\n📖 Estudios Bíblicos: ${estudios}\n📚 Literatura Distribuida: ${literatura}\n🫂 Personas Auxiliadas: ${auxilio}\n🏥 Visitas a Enfermos: ${enfermos}\n🏠 Personas a la Iglesia: ${traidas}\n🚫 No asistieron: ${faltantes || 'Ninguno'}`;
+  const mensaje = `📋 *Reporte Escuela Sabática - ${grupo}*\n🗓️ Fecha: ${hoy}\n\n➡️ Visitas Misioneras: ${visitas}\n📖 Estudios Bíblicos: ${estudios}\n📚 Literatura Distribuida: ${literatura}\n🫂 Personas Auxiliadas: ${auxilio}\n🏥 Visitas a Enfermos: ${enfermos}\n🏠 Personas traídas a la Iglesia: ${traidas}\n🚫 No asistieron: ${faltantes || 'Ninguno'}`;
 
   const whatsappURL = `https://wa.me/?text=${encodeURIComponent(mensaje)}`;
   window.open(whatsappURL, '_blank');
