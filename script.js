@@ -1,35 +1,27 @@
-const hojasGrupo = {
-  "Grupo 1": "https://docs.google.com/spreadsheets/d/e/2PACX-1vTval85fAyOcwqmD5etcelAdYqo0a5WsQUP5ZQB0HAuRD1NabKs_hfevFAgOF8r-Yh1CWsgpQfOGxH6/pub?gid=0&single=true&output=csv",
-  "Grupo 2": "https://docs.google.com/spreadsheets/d/e/2PACX-1vTval85fAyOcwqmD5etcelAdYqo0a5WsQUP5ZQB0HAuRD1NabKs_hfevFAgOF8r-Yh1CWsgpQfOGxH6/pub?gid=1280824297&single=true&output=csv",
-  "Grupo 3": "https://docs.google.com/spreadsheets/d/e/2PACX-1vTval85fAyOcwqmD5etcelAdYqo0a5WsQUP5ZQB0HAuRD1NabKs_hfevFAgOF8r-Yh1CWsgpQfOGxH6/pub?gid=249553127&single=true&output=csv",
-  "Grupo 4": "https://docs.google.com/spreadsheets/d/e/2PACX-1vTval85fAyOcwqmD5etcelAdYqo0a5WsQUP5ZQB0HAuRD1NabKs_hfevFAgOF8r-Yh1CWsgpQfOGxH6/pub?gid=1779055312&single=true&output=csv",
-  "Grupo 5": "https://docs.google.com/spreadsheets/d/e/2PACX-1vTval85fAyOcwqmD5etcelAdYqo0a5WsQUP5ZQB0HAuRD1NabKs_hfevFAgOF8r-Yh1CWsgpQfOGxH6/pub?gid=1668958024&single=true&output=csv"
-};
+// ✅ Pega aquí tu URL de Google Apps Script 👇
+const API_BASE = "https://script.google.com/macros/s/AKfycbw79TRHoNmZzHJ06V3H9_3us97wjMg447QDK0wJ-asgXkoDFGJnHadBbAmqDdet27uMRw/exec";
 
 function cargarHermanos(grupo) {
-  const url = hojasGrupo[grupo];
-  if (!url) return;
-
-  fetch(url)
-    .then(res => res.text())
+  fetch(`${API_BASE}?grupo=${encodeURIComponent(grupo)}`)
+    .then(res => res.json())
     .then(data => {
-      const lineas = data.split("\n").slice(1);
       const lista = document.getElementById("lista-hermanos");
       lista.innerHTML = "";
 
-      lineas.forEach(linea => {
-        const nombre = linea.trim();
-        if (nombre) {
-          const li = document.createElement("li");
-          li.innerHTML = \`
-            <label style="display:flex; justify-content:space-between; align-items:center;">
-              \${nombre}
-              <input type="checkbox" value="\${nombre}" />
-            </label>
-          \`;
-          lista.appendChild(li);
-        }
+      data.forEach(nombre => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <label style="display:flex; justify-content:space-between; align-items:center;">
+            ${nombre}
+            <input type="checkbox" value="${nombre}" />
+          </label>
+        `;
+        lista.appendChild(li);
       });
+    })
+    .catch(err => {
+      console.error("Error al cargar los nombres:", err);
+      alert("No se pudieron cargar los nombres del grupo. Verifica la conexión.");
     });
 }
 
@@ -52,9 +44,9 @@ document.getElementById("registro-form").addEventListener("submit", function (e)
     .map(cb => cb.value)
     .join(', ');
 
-  const mensaje = \`📋 *Reporte Escuela Sabática - \${grupo}*\n\n➡️ Visitas Misioneras: \${visitas}\n📖 Estudios Bíblicos: \${estudios}\n📚 Literatura Distribuida: \${literatura}\n🫂 Personas Auxiliadas: \${auxilio}\n🏥 Visitas a Enfermos: \${enfermos}\n🏠 Personas a la Iglesia: \${traidas}\n🚫 No asistieron: \${faltantes || 'Ninguno'}\`;
+  const mensaje = `📋 *Reporte Escuela Sabática - ${grupo}*\n\n➡️ Visitas Misioneras: ${visitas}\n📖 Estudios Bíblicos: ${estudios}\n📚 Literatura Distribuida: ${literatura}\n🫂 Personas Auxiliadas: ${auxilio}\n🏥 Visitas a Enfermos: ${enfermos}\n🏠 Personas a la Iglesia: ${traidas}\n🚫 No asistieron: ${faltantes || 'Ninguno'}`;
 
-  const whatsappURL = \`https://wa.me/?text=\${encodeURIComponent(mensaje)}\`;
+  const whatsappURL = `https://wa.me/?text=${encodeURIComponent(mensaje)}`;
   window.open(whatsappURL, '_blank');
 
   document.getElementById('resultado').innerText = '¡Registro enviado a WhatsApp!';
