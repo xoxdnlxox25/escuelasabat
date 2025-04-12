@@ -68,13 +68,13 @@
         <input type="number" id="enfermos" min="0" required>
       </div>
 
-      <!-- Contraseña y panel admin -->
-      <div>
-        <label>Contraseña para modificar lista:</label>
-        <input type="password" id="clave" placeholder="Ingrese la contraseña" />
+      <!-- 🔒 Contraseña oculta -->
+      <div style="display: none;">
+        <input type="password" id="clave" value="" />
       </div>
 
-      <div id="admin-panel" style="display:none">
+      <!-- 🔧 Panel admin oculto -->
+      <div id="admin-panel" style="display: none;">
         <label>Agregar nuevo integrante:</label>
         <input type="text" id="nuevo-nombre" placeholder="Nombre del hermano" />
         <button type="button" onclick="agregarNombre()">Agregar</button>
