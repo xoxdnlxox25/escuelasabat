@@ -1,4 +1,6 @@
-const API_BASE = "https://script.google.com/macros/s/AKfycbw79TRHoNmZzHJ06V3H9_3us97wjMg447QDK0wJ-asgXkoDFGJnHadBbAmqDdet27uMRw/exec"; // Reemplaza con tu URL si cambia
+// script.js
+const API_BASE = "https://script.google.com/macros/s/AKfycbx6cniTeUoVFFmbV8AvcUnqecbi6IqV5d3ezNinEmhtQb5bnsY3i2RexRiqYlj0elQB-A/exec";
+const CLAVE = "elviene2025";
 
 function cargarHermanos(grupo) {
   fetch(`${API_BASE}?grupo=${encodeURIComponent(grupo)}`)
@@ -11,8 +13,12 @@ function cargarHermanos(grupo) {
         const li = document.createElement("li");
         li.innerHTML = `
           <label class="item-check">
-            ${nombre}
-            <input type="checkbox" value="${nombre}" />
+            <span>${nombre}</span>
+            <div>
+              <input type="checkbox" value="${nombre}" />
+              ${panelActivo() ? `<button onclick="editarNombre('${nombre}')">✏️</button>
+              <button onclick="eliminarNombre('${nombre}')">🗑️</button>` : ""}
+            </div>
           </label>
         `;
         lista.appendChild(li);
@@ -27,6 +33,22 @@ function cargarHermanos(grupo) {
 document.getElementById("grupo").addEventListener("change", function () {
   cargarHermanos(this.value);
 });
+
+document.getElementById("clave").addEventListener("input", function () {
+  const claveIngresada = this.value;
+  const panel = document.getElementById("admin-panel");
+  if (claveIngresada === CLAVE) {
+    panel.style.display = "block";
+    cargarHermanos(document.getElementById("grupo").value);
+  } else {
+    panel.style.display = "none";
+    cargarHermanos(document.getElementById("grupo").value);
+  }
+});
+
+function panelActivo() {
+  return document.getElementById("clave").value === CLAVE;
+}
 
 document.getElementById("registro-form").addEventListener("submit", function (e) {
   e.preventDefault();
@@ -64,19 +86,70 @@ document.getElementById("registro-form").addEventListener("submit", function (e)
 5️⃣ Inscripciones a Cursos Bíblicos: ${inscripciones}
 6️⃣ Alumnos Atendidos: ${alumnos}
 7️⃣ Personas traídas a la Iglesia: ${traidas}
-8️⃣ Personas auxiliadas (comida, dinero, ropa, etc.): ${auxilio}
+8️⃣ Personas auxiliadas: ${auxilio}
 9️⃣ Contactos Misioneros: ${contactos}
 🔟 Libros prestados o regalados: ${libros}
-📚 Volantes o folletos distribuidos: ${folletos}
-🩺 Obra médico Misionera: ${medico}
+📚 Volantes distribuidos: ${folletos}
+🩺 Obra médico misionera: ${medico}
 🏥 Visitas a Enfermos: ${enfermos}
 🚫 No asistieron: ${faltantes || 'Ninguno'}`;
 
   const whatsappURL = `https://api.whatsapp.com/send?phone=59177824576&text=${encodeURIComponent(mensaje)}`;
-window.open(whatsappURL, '_blank');
-
+  window.open(whatsappURL, '_blank');
 
   document.getElementById('resultado').innerText = '¡Registro enviado a WhatsApp!';
   this.reset();
   document.getElementById("lista-hermanos").innerHTML = "";
+  document.getElementById("admin-panel").style.display = "none";
 });
+
+function agregarNombre() {
+  const grupo = document.getElementById("grupo").value;
+  const nombre = document.getElementById("nuevo-nombre").value;
+  if (!nombre || !grupo) return alert("Debe ingresar un nombre y seleccionar un grupo");
+
+  fetch(API_BASE, {
+    method: "POST",
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `accion=agregar&grupo=${grupo}&nuevo=${nombre}&clave=${CLAVE}`
+  })
+    .then(res => res.text())
+    .then(msg => {
+      alert(msg);
+      document.getElementById("nuevo-nombre").value = "";
+      cargarHermanos(grupo);
+    });
+}
+
+function eliminarNombre(nombre) {
+  const grupo = document.getElementById("grupo").value;
+  if (!confirm(`¿Eliminar a ${nombre}?`)) return;
+
+  fetch(API_BASE, {
+    method: "POST",
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `accion=eliminar&grupo=${grupo}&nombre=${nombre}&clave=${CLAVE}`
+  })
+    .then(res => res.text())
+    .then(msg => {
+      alert(msg);
+      cargarHermanos(grupo);
+    });
+}
+
+function editarNombre(nombreAnterior) {
+  const nuevo = prompt("Editar nombre:", nombreAnterior);
+  if (!nuevo || nuevo === nombreAnterior) return;
+  const grupo = document.getElementById("grupo").value;
+
+  fetch(API_BASE, {
+    method: "POST",
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `accion=editar&grupo=${grupo}&anterior=${nombreAnterior}&nuevo=${nuevo}&clave=${CLAVE}`
+  })
+    .then(res => res.text())
+    .then(msg => {
+      alert(msg);
+      cargarHermanos(grupo);
+    });
+}
