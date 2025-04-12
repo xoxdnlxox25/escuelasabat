@@ -2,6 +2,19 @@
 const API_BASE = "https://script.google.com/macros/s/AKfycbx6cniTeUoVFFmbV8AvcUnqecbi6IqV5d3ezNinEmhtQb5bnsY3i2RexRiqYlj0elQB-A/exec";
 const CLAVE = "elviene2025";
 
+function mostrarSnackbar(texto) {
+  const snack = document.getElementById("snackbar");
+  snack.innerText = texto;
+  snack.classList.add("show");
+  setTimeout(() => snack.classList.remove("show"), 3000);
+}
+
+function mostrarCheckAnimado() {
+  const check = document.getElementById("check-exito");
+  check.classList.add("activo");
+  setTimeout(() => check.classList.remove("activo"), 2500);
+}
+
 function cargarHermanos(grupo) {
   fetch(`${API_BASE}?grupo=${encodeURIComponent(grupo)}`)
     .then(res => res.json())
@@ -11,13 +24,14 @@ function cargarHermanos(grupo) {
 
       data.forEach(nombre => {
         const li = document.createElement("li");
+        li.classList.add("fade-in");
         li.innerHTML = `
           <label class="item-check">
             <span>${nombre}</span>
             <div>
               <input type="checkbox" value="${nombre}" />
               ${panelActivo() ? `<button onclick="editarNombre('${nombre}')">✏️</button>
-              <button onclick="eliminarNombre('${nombre}')">🗑️</button>` : ""}
+              <button onclick="eliminarNombre('${nombre}', this)">🗑️</button>` : ""}
             </div>
           </label>
         `;
@@ -97,7 +111,9 @@ document.getElementById("registro-form").addEventListener("submit", function (e)
   const whatsappURL = `https://api.whatsapp.com/send?phone=59177824576&text=${encodeURIComponent(mensaje)}`;
   window.open(whatsappURL, '_blank');
 
-  document.getElementById('resultado').innerText = '¡Registro enviado a WhatsApp!';
+  mostrarCheckAnimado();
+  mostrarSnackbar("¡Registro enviado a WhatsApp!");
+
   this.reset();
   document.getElementById("lista-hermanos").innerHTML = "";
   document.getElementById("admin-panel").style.display = "none";
@@ -115,13 +131,13 @@ function agregarNombre() {
   })
     .then(res => res.text())
     .then(msg => {
-      alert(msg);
+      mostrarSnackbar(msg);
       document.getElementById("nuevo-nombre").value = "";
       cargarHermanos(grupo);
     });
 }
 
-function eliminarNombre(nombre) {
+function eliminarNombre(nombre, boton) {
   const grupo = document.getElementById("grupo").value;
   if (!confirm(`¿Eliminar a ${nombre}?`)) return;
 
@@ -132,8 +148,10 @@ function eliminarNombre(nombre) {
   })
     .then(res => res.text())
     .then(msg => {
-      alert(msg);
-      cargarHermanos(grupo);
+      mostrarSnackbar(msg);
+      const li = boton.closest("li");
+      if (li) li.classList.add("fade-out");
+      setTimeout(() => cargarHermanos(grupo), 400);
     });
 }
 
@@ -149,7 +167,7 @@ function editarNombre(nombreAnterior) {
   })
     .then(res => res.text())
     .then(msg => {
-      alert(msg);
+      mostrarSnackbar(msg);
       cargarHermanos(grupo);
     });
 }
