@@ -72,9 +72,9 @@ document.getElementById("registro-form").addEventListener("submit", function (e)
 🏥 Visitas a Enfermos: ${enfermos}
 🚫 No asistieron: ${faltantes || 'Ninguno'}`;
 
-  const whatsappURL = `https://wa.me/59177824576?text=${encodeURIComponent(mensaje)}`;
+  const whatsappURL = `https://api.whatsapp.com/send?phone=59177824576&text=${encodeURIComponent(mensaje)}`;
+window.open(whatsappURL, '_blank');
 
-  window.open(whatsappURL, '_blank');
 
   document.getElementById('resultado').innerText = '¡Registro enviado a WhatsApp!';
   this.reset();
