@@ -1,4 +1,4 @@
-const API_BASE = "https://script.google.com/macros/s/AKfycbw79TRHoNmZzHJ06V3H9_3us97wjMg447QDK0wJ-asgXkoDFGJnHadBbAmqDdet27uMRw/exec"; // Reemplaza con tu URL real
+const API_BASE = "https://script.google.com/macros/s/AKfycbw79TRHoNmZzHJ06V3H9_3us97wjMg447QDK0wJ-asgXkoDFGJnHadBbAmqDdet27uMRw/exec"; // Reemplaza con tu URL si cambia
 
 function cargarHermanos(grupo) {
   fetch(`${API_BASE}?grupo=${encodeURIComponent(grupo)}`)
@@ -34,10 +34,17 @@ document.getElementById("registro-form").addEventListener("submit", function (e)
   const grupo = document.getElementById('grupo').value;
   const visitas = document.getElementById('visitas').value;
   const estudios = document.getElementById('estudios').value;
-  const literatura = document.getElementById('literatura').value;
-  const auxilio = document.getElementById('auxilio').value;
-  const enfermos = document.getElementById('enfermos').value;
+  const cultos = document.getElementById('cultos').value;
+  const cartas = document.getElementById('cartas').value;
+  const inscripciones = document.getElementById('inscripciones').value;
+  const alumnos = document.getElementById('alumnos').value;
   const traidas = document.getElementById('traidas').value;
+  const auxilio = document.getElementById('auxilio').value;
+  const contactos = document.getElementById('contactos').value;
+  const libros = document.getElementById('libros').value;
+  const folletos = document.getElementById('folletos').value;
+  const medico = document.getElementById('medico').value;
+  const enfermos = document.getElementById('enfermos').value;
 
   const faltantes = [...document.querySelectorAll('#lista-hermanos input:checked')]
     .map(cb => cb.value)
@@ -47,9 +54,26 @@ document.getElementById("registro-form").addEventListener("submit", function (e)
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
   });
 
-  const mensaje = `📋 *Reporte Escuela Sabática - ${grupo}*\n🗓️ Fecha: ${hoy}\n\n➡️ Visitas Misioneras: ${visitas}\n📖 Estudios Bíblicos: ${estudios}\n📚 Literatura Distribuida: ${literatura}\n🫂 Personas Auxiliadas: ${auxilio}\n🏥 Visitas a Enfermos: ${enfermos}\n🏠 Personas traídas a la Iglesia: ${traidas}\n🚫 No asistieron: ${faltantes || 'Ninguno'}`;
+  const mensaje = `📋 *Reporte Escuela Sabática - ${grupo}*
+🗓️ Fecha: ${hoy}
 
-  const whatsappURL = `https://wa.me/?text=${encodeURIComponent(mensaje)}`;
+1️⃣ Visitas Misioneras: ${visitas}
+2️⃣ Estudios Bíblicos: ${estudios}
+3️⃣ Cultos con Hnos. o interesados: ${cultos}
+4️⃣ Cartas misioneras o E-MAIL: ${cartas}
+5️⃣ Inscripciones a Cursos Bíblicos: ${inscripciones}
+6️⃣ Alumnos Atendidos: ${alumnos}
+7️⃣ Personas traídas a la Iglesia: ${traidas}
+8️⃣ Personas auxiliadas (comida, dinero, ropa, etc.): ${auxilio}
+9️⃣ Contactos Misioneros: ${contactos}
+🔟 Libros prestados o regalados: ${libros}
+📚 Volantes o folletos distribuidos: ${folletos}
+🩺 Obra médico Misionera: ${medico}
+🏥 Visitas a Enfermos: ${enfermos}
+🚫 No asistieron: ${faltantes || 'Ninguno'}`;
+
+  const whatsappURL = `https://wa.me/59177824576?text=${encodeURIComponent(mensaje)}`;
+
   window.open(whatsappURL, '_blank');
 
   document.getElementById('resultado').innerText = '¡Registro enviado a WhatsApp!';
