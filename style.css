@@ -217,7 +217,6 @@ button:active {
   from { bottom: 30px; opacity: 1; }
   to { bottom: 0; opacity: 0; }
 }
-
 /* EFECTOS DE APARICIÓN/DESAPARICIÓN SUAVE */
 .fade-in {
   animation: aparecer 0.4s ease-in;
