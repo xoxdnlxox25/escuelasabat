@@ -1,4 +1,3 @@
-// script.js
 const API_BASE = "https://script.google.com/macros/s/AKfycbx6cniTeUoVFFmbV8AvcUnqecbi6IqV5d3ezNinEmhtQb5bnsY3i2RexRiqYlj0elQB-A/exec";
 const CLAVE = "elviene2025";
 
@@ -43,22 +42,6 @@ function cargarHermanos(grupo) {
       alert("No se pudieron cargar los nombres del grupo. Verifica la conexión.");
     });
 }
-
-document.getElementById("grupo").addEventListener("change", function () {
-  cargarHermanos(this.value);
-});
-
-document.getElementById("clave").addEventListener("input", function () {
-  const claveIngresada = this.value;
-  const panel = document.getElementById("admin-panel");
-  if (claveIngresada === CLAVE) {
-    panel.style.display = "block";
-    cargarHermanos(document.getElementById("grupo").value);
-  } else {
-    panel.style.display = "none";
-    cargarHermanos(document.getElementById("grupo").value);
-  }
-});
 
 function panelActivo() {
   return document.getElementById("clave").value === CLAVE;
@@ -171,3 +154,50 @@ function editarNombre(nombreAnterior) {
       cargarHermanos(grupo);
     });
 }
+
+// Mostrar/Ocultar contraseña y validar entrada
+document.addEventListener("DOMContentLoaded", function () {
+  const claveInput = document.getElementById("clave");
+  const toggleBtn = document.getElementById("toggleClave");
+  const btnValidar = document.getElementById("btn-validar-clave");
+  const bloqueClave = document.getElementById("bloque-clave");
+  const bloqueAusentes = document.getElementById("bloque-ausentes");
+  const panelAdmin = document.getElementById("admin-panel");
+  const selectGrupo = document.getElementById("grupo");
+
+  // Mostrar/ocultar contraseña 👁️
+  if (claveInput && toggleBtn) {
+    toggleBtn.addEventListener("click", function () {
+      const esOculto = claveInput.type === "password";
+      claveInput.type = esOculto ? "text" : "password";
+      toggleBtn.textContent = esOculto ? "🙈" : "👁️";
+    });
+  }
+
+  // Mostrar elementos al seleccionar grupo
+  if (selectGrupo) {
+    selectGrupo.addEventListener("change", function () {
+      const mostrar = !!this.value;
+      bloqueClave.style.display = mostrar ? "block" : "none";
+      bloqueAusentes.style.display = mostrar ? "block" : "none";
+      panelAdmin.style.display = "none";
+      document.getElementById("lista-hermanos").innerHTML = "";
+      if (mostrar) cargarHermanos(this.value);
+    });
+  }
+
+  // Validar clave solo al hacer clic en botón
+  if (btnValidar) {
+    btnValidar.addEventListener("click", function () {
+      const valorClave = claveInput.value.trim();
+      if (valorClave === CLAVE) {
+        panelAdmin.style.display = "block";
+        mostrarSnackbar("✅ Acceso concedido.");
+      } else {
+        panelAdmin.style.display = "none";
+        mostrarSnackbar("❌ Contraseña incorrecta.");
+        claveInput.value = ""; // Limpiar campo
+      }
+    });
+  }
+});
