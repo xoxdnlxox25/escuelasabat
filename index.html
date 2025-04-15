@@ -68,10 +68,32 @@
         <input type="number" id="enfermos" min="0" required>
       </div>
 
-      <!-- 🔒 Contraseña oculta -->
-      <div style="display: none;">
-        <input type="password" id="clave" value="" />
-      </div>
+  <!-- 🔓 Contraseña visible solo cuando se seleccione un grupo -->
+<div id="bloque-clave" style="display: none; position: relative; margin-top: 1rem;">
+  <label for="clave">Contraseña de administrador:</label>
+  <div style="display: flex; align-items: center;">
+    <input
+      type="password"
+      id="clave"
+      placeholder="Ingresa clave para editar"
+      autocomplete="off"
+      style="flex: 1; padding-right: 2.5rem;"
+    />
+    <span id="toggleClave" style="
+      margin-left: -2rem;
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: #666;
+      user-select: none;
+    ">👁️</span>
+    <button type="button" id="btn-validar-clave" style="
+      margin-left: 1rem;
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+    ">Entrar</button>
+  </div>
+</div>
+
 
       <!-- 🔧 Panel admin oculto -->
       <div id="admin-panel" style="display: none;">
@@ -80,11 +102,12 @@
         <button type="button" onclick="agregarNombre()">Agregar</button>
       </div>
 
-      <!-- Lista de ausentes -->
-      <div>
-        <label>Hermanos que no asistieron:</label>
-        <ul id="lista-hermanos"></ul>
-      </div>
+     <!-- Lista de ausentes visible solo si hay grupo -->
+<div id="bloque-ausentes" style="display: none;">
+  <label>Hermanos que no asistieron:</label>
+  <ul id="lista-hermanos"></ul>
+</div>
+
 
       <!-- Botón enviar -->
       <button type="submit">Registrar y Compartir</button>
@@ -102,5 +125,20 @@
 
   <!-- 📣 Snackbar de confirmación -->
   <div id="snackbar"></div>
+
+  <!-- 👁️ Mostrar/Ocultar contraseña -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const inputClave = document.getElementById("clave");
+      const toggle = document.getElementById("toggleClave");
+
+      toggle.addEventListener("click", function () {
+        const tipo = inputClave.type === "password" ? "text" : "password";
+        inputClave.type = tipo;
+        toggle.textContent = tipo === "password" ? "👁️" : "🙈";
+      });
+    });
+  </script>
 </body>
 </html>
+
