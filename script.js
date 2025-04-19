@@ -1,5 +1,6 @@
 const API_BASE = "https://script.google.com/macros/s/AKfycbx6cniTeUoVFFmbV8AvcUnqecbi6IqV5d3ezNinEmhtQb5bnsY3i2RexRiqYlj0elQB-A/exec";
 const CLAVE = "elviene2025";
+const GUARDAR_DATOS_URL = "https://script.google.com/macros/s/AKfycbyRDDRYbkVaS-u0qzguBwXcvHbOYdl6fXc-RsDIMBFj-CEs5W_oz0KBHzCbjb4cW2UD/exec";
 
 function mostrarSnackbar(texto) {
   const snack = document.getElementById("snackbar");
@@ -20,7 +21,6 @@ function cargarHermanos(grupo) {
     .then(data => {
       const lista = document.getElementById("lista-hermanos");
       lista.innerHTML = "";
-
       data.forEach(nombre => {
         const li = document.createElement("li");
         li.classList.add("fade-in");
@@ -64,7 +64,6 @@ document.getElementById("registro-form").addEventListener("submit", function (e)
   const folletos = document.getElementById('folletos').value;
   const medico = document.getElementById('medico').value;
   const enfermos = document.getElementById('enfermos').value;
-
   const faltantes = [...document.querySelectorAll('#lista-hermanos input:checked')]
     .map(cb => cb.value)
     .join(', ');
@@ -91,11 +90,35 @@ document.getElementById("registro-form").addEventListener("submit", function (e)
 🏥 Visitas a Enfermos: ${enfermos}
 🚫 No asistieron: ${faltantes || 'Ninguno'}`;
 
+  // WhatsApp
   const whatsappURL = `https://api.whatsapp.com/send?phone=59177824576&text=${encodeURIComponent(mensaje)}`;
   window.open(whatsappURL, '_blank');
 
+  // Guardar en Google Sheet
+  fetch(GUARDAR_DATOS_URL, {
+    method: "POST",
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      grupo,
+      visitas,
+      estudios,
+      cultos,
+      cartas,
+      inscripciones,
+      alumnos,
+      traidas,
+      auxilio,
+      contactos,
+      libros,
+      folletos,
+      medico,
+      enfermos,
+      faltantes
+    })
+  });
+
   mostrarCheckAnimado();
-  mostrarSnackbar("¡Registro enviado a WhatsApp!");
+  mostrarSnackbar("¡Registro enviado a WhatsApp y guardado!");
 
   this.reset();
   document.getElementById("lista-hermanos").innerHTML = "";
@@ -110,7 +133,12 @@ function agregarNombre() {
   fetch(API_BASE, {
     method: "POST",
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: `accion=agregar&grupo=${grupo}&nuevo=${nombre}&clave=${CLAVE}`
+    body: new URLSearchParams({
+      accion: "agregar",
+      grupo,
+      nuevo: nombre,
+      clave: CLAVE
+    })
   })
     .then(res => res.text())
     .then(msg => {
@@ -127,7 +155,12 @@ function eliminarNombre(nombre, boton) {
   fetch(API_BASE, {
     method: "POST",
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: `accion=eliminar&grupo=${grupo}&nombre=${nombre}&clave=${CLAVE}`
+    body: new URLSearchParams({
+      accion: "eliminar",
+      grupo,
+      nombre,
+      clave: CLAVE
+    })
   })
     .then(res => res.text())
     .then(msg => {
@@ -146,7 +179,13 @@ function editarNombre(nombreAnterior) {
   fetch(API_BASE, {
     method: "POST",
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: `accion=editar&grupo=${grupo}&anterior=${nombreAnterior}&nuevo=${nuevo}&clave=${CLAVE}`
+    body: new URLSearchParams({
+      accion: "editar",
+      grupo,
+      anterior: nombreAnterior,
+      nuevo,
+      clave: CLAVE
+    })
   })
     .then(res => res.text())
     .then(msg => {
@@ -155,26 +194,15 @@ function editarNombre(nombreAnterior) {
     });
 }
 
-// Mostrar/Ocultar contraseña y validar entrada
+// Inicialización
 document.addEventListener("DOMContentLoaded", function () {
   const claveInput = document.getElementById("clave");
-  const toggleBtn = document.getElementById("toggleClave");
   const btnValidar = document.getElementById("btn-validar-clave");
   const bloqueClave = document.getElementById("bloque-clave");
   const bloqueAusentes = document.getElementById("bloque-ausentes");
   const panelAdmin = document.getElementById("admin-panel");
   const selectGrupo = document.getElementById("grupo");
 
-  // Mostrar/ocultar contraseña 👁️
-  if (claveInput && toggleBtn) {
-    toggleBtn.addEventListener("click", function () {
-      const esOculto = claveInput.type === "password";
-      claveInput.type = esOculto ? "text" : "password";
-      toggleBtn.textContent = esOculto ? "🙈" : "👁️";
-    });
-  }
-
-  // Mostrar elementos al seleccionar grupo
   if (selectGrupo) {
     selectGrupo.addEventListener("change", function () {
       const mostrar = !!this.value;
@@ -186,18 +214,20 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Validar clave solo al hacer clic en botón
   if (btnValidar) {
     btnValidar.addEventListener("click", function () {
       const valorClave = claveInput.value.trim();
       if (valorClave === CLAVE) {
         panelAdmin.style.display = "block";
         mostrarSnackbar("✅ Acceso concedido.");
+        const grupo = selectGrupo.value;
+        if (grupo) cargarHermanos(grupo);
       } else {
         panelAdmin.style.display = "none";
         mostrarSnackbar("❌ Contraseña incorrecta.");
-        claveInput.value = ""; // Limpiar campo
+        claveInput.value = "";
       }
     });
   }
 });
+
