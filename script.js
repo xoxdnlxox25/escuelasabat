@@ -91,7 +91,7 @@ document.getElementById("registro-form").addEventListener("submit", function (e)
 🚫 No asistieron: ${faltantes || 'Ninguno'}`;
 
   // WhatsApp
-  const whatsappURL = `https://api.whatsapp.com/send?phone=59177824576&text=${encodeURIComponent(mensaje)}`;
+  const whatsappURL = `https://api.whatsapp.com/send?phone=59171029033&text=${encodeURIComponent(mensaje)}`;
   window.open(whatsappURL, '_blank');
 
   // Guardar en Google Sheet
